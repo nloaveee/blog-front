@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "baseUrl": "./srd",
+        "baseUrl": "src",
         "lib": [
             "dom",
             "DOM.Iterable",
