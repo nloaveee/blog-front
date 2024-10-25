@@ -8,6 +8,9 @@ import User from 'views/User';
 import BoardDetail from 'views/Board/Detail';
 import BoardWrite from 'views/Board/Write';
 import BoardUpdate from 'views/Board/Update';
+import Container from 'layouts/Container';
+import { AUTH_PAHT, BOARD_DETAIL_PATH, BOARD_PATH, BOARD_UPDATE_PATH, BOARD_WRITE_PATH, MAIN_PAHT, SEARCH_PATH, USER_PATH } from 'constant';
+
 
 
 //           component : Application 컴포넌트          //
@@ -23,19 +26,18 @@ function App() {
     // description : 게시물 수정하기 : '/board/update/:boardId'  - BoardUpdate //
     return (
         <Routes>
-            <Route>
-
-                
+            <Route element={<Container/>}>
+                <Route path={MAIN_PAHT()} element={<Main/>}></Route>
+                <Route path={AUTH_PAHT()} element={<Authentication/>}></Route>
+                <Route path={SEARCH_PATH(':searchWord')} element={<Search/>}></Route>
+                <Route path={USER_PATH(':userEmail')} element={<User/>}></Route>
+                <Route path={BOARD_PATH()}>
+                    <Route path={BOARD_WRITE_PATH()} element={<BoardWrite />} />
+                    <Route path={BOARD_DETAIL_PATH(':boardId')} element={<BoardDetail />} />
+                    <Route path={BOARD_UPDATE_PATH(':boardId')} element={<BoardUpdate />} />
+                </Route>                
             </Route>
-            <Route path='/' element={<Main/>}></Route>
-            <Route path='/auth' element={<Authentication/>}></Route>
-            <Route path='/search' element={<Search/>}></Route>
-            <Route path='/user' element={<User/>}></Route>
-            <Route path='/board'>
-                <Route path='write' element={<BoardWrite />} />
-                <Route path='detail/:boardId' element={<BoardDetail />} />
-                <Route path='update/:boardId' element={<BoardUpdate />} />
-            </Route>
+            <Route path='*' element={<h1>404 Not Fonund</h1>}/>
         </Routes>
     );
 }

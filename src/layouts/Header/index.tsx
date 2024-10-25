@@ -6,6 +6,6 @@ export default function Header() {
 
     //           render : header layout 렌더링          //
     return (
-    <div>index</div>
+    <div>header</div>
     )
 }
