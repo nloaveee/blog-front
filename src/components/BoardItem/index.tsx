@@ -15,7 +15,7 @@ export default function BoardItem({boardListItem} : Props) {
     //            properties                                 //
     const { boardId, title, content, boardTitleImage } = boardListItem;
     const { favoriteCount, commentCount, viewCount } = boardListItem;
-    const { writeDateTime, writerNickname, writerProfileImage } =boardListItem;
+    const { writeDatetime, writerNickname, writerProfileImage } =boardListItem;
 
     //            function : 네비게이트 함수             //
     //const navigator = useNavigate();
@@ -36,7 +36,7 @@ export default function BoardItem({boardListItem} : Props) {
                     </div>
                     <div className='board-list-item-write-box'>
                         <div className='board-list-item-nickname'>{writerNickname}</div>
-                        <div className='board-list-item-write-date'>{writeDateTime}</div>
+                        <div className='board-list-item-write-date'>{writeDatetime}</div>
                     </div>
                 </div>
                 <div className= 'board-list-item-middle'>

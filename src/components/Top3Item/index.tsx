@@ -14,7 +14,7 @@ export default function Top3Item({top3ListItem} : Props) {
     //             properties                //
     const {boardId, title, content, boardTitleImage} = top3ListItem;
     const {favoriteCount, commentCount, viewCount} = top3ListItem;
-    const {writeDateTime, writerNickname, writerProfileImage} = top3ListItem;
+    const {writeDatetime, writerNickname, writerProfileImage} = top3ListItem;
 
     //            function: 네비게이트 함수           //
     //const navigator = useNavigate();
@@ -34,7 +34,7 @@ export default function Top3Item({top3ListItem} : Props) {
                     </div>
                     <div className='top-3-list-item-write-box'>
                         <div className='top-3-list-item-nickname'>{writerNickname}</div>
-                        <div className='top-3-list-item-write-date'>{writeDateTime}</div>
+                        <div className='top-3-list-item-write-date'>{writeDatetime}</div>
                     </div>
                 </div>
                 <div className='top-3-list-item-middle'>
