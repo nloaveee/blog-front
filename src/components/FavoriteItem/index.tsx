@@ -11,7 +11,7 @@ interface Props {
 export default function favoriteItem({favoriteListItem} : Props) {
 
 
-    //             properties                //
+    //         state : properties            //
     const {profileImage, nickname} = favoriteListItem;
 
     //             render: Favorite List Item 렌더링            //
