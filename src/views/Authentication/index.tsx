@@ -29,8 +29,13 @@ export default function Authentication() {
         const [error, setError] = useState<boolean>(false);
 
 
-        //            event handler : 로그인 버튼 클릭 이벤트 처리            /
+        //            event handler : 로그인 버튼 클릭 이벤트 처리            //
         const onSignInButtonClickHandler = () => {}
+
+        //            event handler : 로그인 버튼 클릭 이벤트 처리            //
+        const onSignInUpLinkClickHandler = () => {
+            setView('sign-up');
+        }
 
 
         //            event handler : 패스워드 버튼 클릭 이벤트 처리            //
@@ -69,20 +74,22 @@ export default function Authentication() {
                 <div className='auth-card-box'>
                     <div className='auth-card-top'>
                         <div className='auth-card-title-box'>
-                            <div className='auth-card-titke'>{'로그인'}</div>
+                            <div className='auth-card-title'>{'로그인'}</div>
                         </div>
                         <InputBox ref={emailRef} label='이메일 주소' type='text' placeholder='이메일 주소를 입력해주세요' error={error} value={email} setValue={setEmail} onKeyDown={onEmailKeyDownHandler}/>
                         <InputBox ref={passwordRef} label='패스워드' type={passwordType} placeholder='비밀번호를 입력해주세요' error={error} value={password} setValue={setPassword} icon={passwordButtonIcon} onButtonClick={onPasswordButtonClickHandler} onKeyDown={onPasswordKeyDownHandler}/>
                     </div>
-                    <div className='auth-catd-bottom'>
+                    <div className='auth-card-bottom'>
+                    {error && 
                         <div className='auth-sign-in-error-box'>
                             <div className='auth-sign-in-error-message'>
                                 {'이메일 주소 또는 비밀번호를 잘못 입력했습니다. \n입력하신 내용을 다시 확인해주세요.'}
                             </div>
                         </div>
+                    }
                         <div className='black-large-full-button' onClick={onSignInButtonClickHandler}>{'로그인'}</div>
                         <div className='auth-description-box'>
-                            <div className='auth-descrpition'>{'신규 사용자이신가요?'}<span className='auth-description-link'>{'회원가입'}</span></div>
+                            <div className='auth-descrpition' onClick={onSignInUpLinkClickHandler}>{'신규 사용자이신가요? '}<span className='auth-description-link'>{'회원가입'}</span></div>
                         </div>
                     </div>
                 </div>
