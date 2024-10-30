@@ -10,7 +10,7 @@ const DOMAIN = 'http://localhost:8080';
 const API_DOMAIN = `${DOMAIN}/api/v1`;
 
 const authorization = (accessToken: string) => {
-    return { headers : { Authorization: `Bearer $ {accessToken}`}}
+    return { headers : { Authorization: `Bearer ${accessToken}`}}
 };
 
 const SIGN_IN_URL = () => `${API_DOMAIN}/auth/sign-in`;

@@ -95,11 +95,11 @@ export default function Authentication() {
         //            event handler : 패스워드 버튼 클릭 이벤트 처리            //
         const onPasswordButtonClickHandler = () => {
             if (passwordType === 'text') {
-                setPassword('password');
+                setPasswordType('password');
                 setPasswordButtonIcon('eye-light-off-icon');
             }
             else {
-                setPassword('text');
+                setPasswordType('text');
                 setPasswordButtonIcon('eye-light-on-icon');
             }
         }
