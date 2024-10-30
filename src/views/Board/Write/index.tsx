@@ -39,13 +39,20 @@ export default function BoardWrite() {
                 <div className='board-write-content-box'>
                     <textarea ref={contentRef} className='board-write-content-textarea' placeholder='본문을 작성해주세요.' value={content}/>
                     <div className='icon-button'>
-                        <div className='icon image-box-icon'></div>
+                        <div className='icon image-box-light-icon'></div>
                     </div>
                     <input ref={imageInputRef} type='file' accept='image/*' style={{display: 'none'}}/>
                 </div>
                 <div className='board-write-images-box'>
                     <div className='board-write-image-box'>
-                        <img className='board-write-image'/>
+                        <img className='board-write-image' src='https://cdn.pixabay.com/photo/2023/01/23/17/28/tree-7739243_640.jpg'/>
+                        <div className='icon-button image-close'>
+                            <div className='icon close-icon'></div>
+                        </div>
+                    </div>
+
+                    <div className='board-write-image-box'>
+                        <img className='board-write-image' src='https://cdn.pixabay.com/photo/2023/12/20/07/04/sunset-8459057_640.jpg'/>
                         <div className='icon-button image-close'>
                             <div className='icon close-icon'></div>
                         </div>
