@@ -118,22 +118,23 @@ export default function Header() {
         const { userEmail } =useParams();
 
         //           event handler : 마이페이지 버튼 클릭 이벤트 처리 함수             //
-        const onMyPafeButtonClickHandler = () => {
+        const onMyPageButtonClickHandler = () => {
             if (!loginUser) return;
             const { email } = loginUser;
             navigate(USER_PATH(email));
-        }
+        };
 
         //           event handler : 로그아웃 버튼 클릭 이벤트 처리 함수             //
         const onSignOutButtonClickHandler = () => {
             resetLoginUser();
+            setCookie('accessToken','',{ path: MAIN_PAHT(), expires: new Date() });
             navigate(MAIN_PAHT());
-        }
+        };
 
         //           event handler : 로그인 버튼 클릭 이벤트 처리 함수             //
         const onSignInButtonClickHandler = () => {
             navigate(AUTH_PAHT());
-        }
+        };
 
         //           render : 로그아웃 버튼 컴포넌트 렌더링          //
         if (isLogin && userEmail === loginUser?.email)
@@ -141,7 +142,7 @@ export default function Header() {
         
         //           render : 마이페이지 버튼 컴포넌트 렌더링          //
         if(isLogin)
-        return <div className='white-button' onClick={onMyPafeButtonClickHandler}>{'마이페이지'}</div>
+        return <div className='white-button' onClick={onMyPageButtonClickHandler}>{'마이페이지'}</div>
 
         //           render : 로그인 버튼 컴포넌트 렌더링          //
         return <div className='black-button' onClick={onSignInButtonClickHandler}>{'로그인'}</div>
@@ -191,6 +192,10 @@ export default function Header() {
         setUserPage(isUserPage)
 
     },[pathname]);
+    //            effect: loginUser가 변경될 때 마다 실행될 함수           //
+    useEffect(() => {
+        setLogin(loginUser!==null);
+    },[loginUser]);
 
     //           render : header layout 렌더링          //
     return (
