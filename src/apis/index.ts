@@ -50,7 +50,7 @@ export const signUpRequest = async (requestBody: SignUpRequestDto) => {
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 
 export const postBoardRequest = async (requestBody : PostBoardRequestDto, accessToken: string) => {
-    const result = await axios.post(POST_BOARD_URL(), authorization(accessToken))
+    const result = await axios.post(POST_BOARD_URL(), requestBody, authorization(accessToken))
     .then(response => {
         const responseBody: getSignInUserResponseDto =  response.data;
         return responseBody;
