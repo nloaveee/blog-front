@@ -30,7 +30,7 @@ function App() {
     const getSignInUserResponse = (responseBody: GetSignInUserResponseDto | ResponseDto | null) => {
         if (!responseBody) return;
         const { code } = responseBody;
-        if (code === 'AF' || code == 'NU' || code === 'DBE' ) {
+        if (code === 'AF' || code === 'NU' || code === 'DBE' ) {
             resetLoginUser();
             return;
         } 
