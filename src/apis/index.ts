@@ -4,6 +4,8 @@ import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto } from './response/user';
 import { PostBoardRequestDto } from './request/board';
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto } from './response/board';
+
 
 const DOMAIN = 'http://localhost:8080';
 
@@ -46,12 +48,42 @@ export const signUpRequest = async (requestBody: SignUpRequestDto) => {
     return result;
 }
 
+const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
+const INCREASE_VIEW_COUNT_URL = (boardId : number | string) => `${API_DOMAIN}/board/${boardId}/increase-view-count`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+export const getBoardRequest = async (boardId: number | string) => {
+    const result = await axios.get(GET_BOARD_URL(boardId))
+    .then(response => {
+        const responseBody: GetBoardResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+}
+
+export const IncreaseViewCountRequest = async (boardId: number | string) => {
+    const result = await axios.get(INCREASE_VIEW_COUNT_URL(boardId))
+    .then(response => {
+        const responseBody: IncreaseViewCountResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+}
 
 export const postBoardRequest = async (requestBody : PostBoardRequestDto, accessToken: string) => {
     const result = await axios.post(POST_BOARD_URL(), requestBody, authorization(accessToken))
     .then(response => {
-        const responseBody: getSignInUserResponseDto =  response.data;
+        const responseBody: PostBoardResponseDto =  response.data;
         return responseBody;
     })
     .catch(error => {
