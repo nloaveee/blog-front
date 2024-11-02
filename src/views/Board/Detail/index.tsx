@@ -5,9 +5,19 @@ import { commentListMock, favoriteListMock } from 'mocks';
 import FavoriteItem from 'components/FavoriteItem';
 import CommnentItem from 'components/CommentItem';
 import Pagination from 'components/Pagination';
+import defaultProfileImage from 'assets/image/default-profile-image.png';
 
 //            component: 게시물 상세 화면 컴포넌트                  //
 export default function BoardDetail() {
+
+    //            state : more 버튼 상태                //
+    const [showMore, setShowMore] = useState<boolean>(false);
+
+
+    //            event handler : more 버튼 클릭 이벤트 처리                  //
+    const onMoreButtonClickHandler = () => {
+        setShowMore(!showMore);
+    }
 
 
     //            component: 게시물 상세 상단 컴포넌트                  //
@@ -20,25 +30,26 @@ export default function BoardDetail() {
                     <div className='board-detail-title'>{'오늘 점심 뭐먹지 맛있는거 먹고 싶은데 추천 부탁'}</div>
                     <div className='board-detail-top-sub-box'>
                         <div className='board-detail-info-box'>
-                            <div className='board-detail-writer-profile-image'></div>
+                            <div className='board-detail-writer-profile-image' style={{backgroundImage: `url(${defaultProfileImage})`}}></div>
                             <div className='board-detail-writer-nickname'>{'안녕하세요나는홍길동'}</div>
                             <div className='board-detail-info-divider'>{"\|"}</div>
                             <div className='board-detail-wirte-date'>{'2023.03.23'}</div>
                         </div>
-                        <div className='icon-button'>
+                        <div className='icon-button' onClick={onMoreButtonClickHandler}>
                             <div className='icon more-icon'></div>
                         </div>
+                        {showMore &&
                         <div className='board-detail-more-box'>
                             <div className='board-detail-update-button'>{'수정'}</div>
                             <div className='divider'></div>
                             <div className='board-detail-delete-button'>{'삭제'}</div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
                 <div className='divider'></div>
                 <div className='board-detail-top-main'>
-                    <div className='board-detail-top-text'>{'오늘 점심을 뭐먹을 지 너무 고민이 되는데 뭐 먹을까? 나 점심때 오늘 뭐먹을 지 너무 고민이 되는데 뭐 먹을까?'}</div>
-                    <div className='board-detail-top-image'></div>
+                    <div className='board-detail-top-text'>{'오늘 점심을 뭐먹을 지 너무 고민이 되는데 뭐 먹을까? 나 점심때 오늘 뭐먹을 지 너무 고민이 되는데 뭐 먹을까? 오늘 점심을 뭐먹을 지 너무 고민이 되는데 뭐 먹을까? 나 점심때 오늘 뭐먹을 지 너무 고민이 되는데 뭐 먹을까?'}</div>
+                    <img className='board-detail-top-image' src='https://cdn.pixabay.com/photo/2023/01/14/19/54/christmas-7718958_640.jpg'></img>
                 </div>
             </div>
         );
@@ -114,7 +125,8 @@ export default function BoardDetail() {
     return (
     <div id='board-detail-wrapper'>
         <div className='board-detail-container'>
-
+            <BoardDetailTop/>
+            <BoardDetailBottom/>
         </div>
     </div>
     );

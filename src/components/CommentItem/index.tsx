@@ -22,7 +22,7 @@ export default function CommnentItem({commentListItem} : Props) {
                     <div className='comment-list-item-profile-image' style={{backgroundImage: `url(${profileImage ? profileImage : defaultProfileImage})`}}></div>
                 </div>
                 <div className='comment-list-item-nickname'>{nickname}</div>
-                <div className='comment-list-item-divider'>{'\|'}</div>
+                <div className='comment-list-item-divider'>{' '}</div>
                 <div className='comment-list-item-time'>{writeDatetime}</div>
             </div>
             <div className='comment-list-item-main'>
