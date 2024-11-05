@@ -4,7 +4,7 @@ import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto } from './response/user';
 import { PostBoardRequestDto, PostCommentRequestDto } from './request/board';
-import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto } from './response/board';
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto } from './response/board';
 
 
 const DOMAIN = 'http://localhost:8080';
@@ -55,6 +55,7 @@ const GET_COMMENT_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 const POST_COMMENT_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/comment`;
 const PUT_FAVORITE_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite`;
+const DELETE_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
 
 export const getBoardRequest = async (boardId: number | string) => {
     const result = await axios.get(GET_BOARD_URL(boardId))
@@ -148,6 +149,21 @@ export const PutFavoriteRequest = async (boardId : number | string, accessToken:
     const result = await axios.put(PUT_FAVORITE_URL(boardId), {}, authorization(accessToken))
     .then(response => {
         const responseBody: PostBoardResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+}
+
+// 게시물 삭제
+export const deleteBoardRequest = async (boardId : number | string, accessToken: string) => {
+    const result = await axios.delete(DELETE_BOARD_URL(boardId), authorization(accessToken))
+    .then(response => {
+        const responseBody: DeleteBoardResponseDto =  response.data;
         return responseBody;
     })
     .catch(error => {
