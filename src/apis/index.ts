@@ -52,8 +52,8 @@ const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${board
 const INCREASE_VIEW_COUNT_URL = (boardId : number | string) => `${API_DOMAIN}/board/${boardId}/increase-view-count`;
 const GET_FAVORITE_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite-list`;
 const GET_COMMENT_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/comment-list`;
-
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+const PUT_FAVORITE_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite`;
 
 export const getBoardRequest = async (boardId: number | string) => {
     const result = await axios.get(GET_BOARD_URL(boardId))
@@ -115,6 +115,21 @@ export const getCommentListRequest  = async (boardId : number | string) => {
 
 export const postBoardRequest = async (requestBody : PostBoardRequestDto, accessToken: string) => {
     const result = await axios.post(POST_BOARD_URL(), requestBody, authorization(accessToken))
+    .then(response => {
+        const responseBody: PostBoardResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+}
+
+// 게시물 상세 페이지 좋아요 삭제
+export const PutFavoriteRequest = async (boardId : number | string, accessToken: string) => {
+    const result = await axios.put(PUT_FAVORITE_URL(boardId), {}, authorization(accessToken))
     .then(response => {
         const responseBody: PostBoardResponseDto =  response.data;
         return responseBody;

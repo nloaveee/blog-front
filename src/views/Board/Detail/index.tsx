@@ -10,13 +10,14 @@ import { useLoginUserStore } from 'stores';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BOARD_PATH, BOARD_UPDATE_PATH, MAIN_PAHT, USER_PATH } from 'constant';
 import Board from 'types/interface/board.interface';
-import { getBoardRequest, getCommentListRequest, getFavoriteListRequest, IncreaseViewCountRequest } from 'apis';
+import { getBoardRequest, getCommentListRequest, getFavoriteListRequest, IncreaseViewCountRequest, PutFavoriteRequest } from 'apis';
 import GetBoardResponseDto from 'apis/response/board/get-board.response.dto';
 import { ResponseDto } from 'apis/response';
-import { GetCommentListResponseDto, GetFavoriteListResponseDto, IncreaseViewCountResponseDto } from 'apis/response/board';
+import { GetCommentListResponseDto, GetFavoriteListResponseDto, IncreaseViewCountResponseDto, PutFavoriteResponseDto } from 'apis/response/board';
 
 import dayjs from 'dayjs';
 import { getSignInUserResponseDto } from 'apis/response/user';
+import { useCookies } from 'react-cookie';
 
 //            component: 게시물 상세 화면 컴포넌트                  //
 export default function BoardDetail() {
@@ -26,6 +27,8 @@ export default function BoardDetail() {
     const {boardId} = useParams();
     //            state : 로그인 유저 상태             //
     const {loginUser} = useLoginUserStore();
+    //            state : 쿠키 상태            //
+    const [cookies, setCookies] = useCookies();
 
 
     //              function: 네비게이트 함수               //
@@ -209,9 +212,25 @@ export default function BoardDetail() {
             setCommentList(commentList);
         }
 
+        //            event handler: put favorite response 처리 함수                 //
+        const putFavoriteResponse = (responseBody : PutFavoriteResponseDto | ResponseDto | null) => {
+        if (!responseBody) return;
+        const {code} = responseBody;
+        if (code === 'VF') alert('잘못된 접근입니다.');
+        if (code === 'NU') alert('존재하지 않는 유저입니다.');
+        if (code === 'NB') alert('존재하지 않는 게시물입니다.');
+        if (code === 'AF') alert('인증에 실패했습니다.');
+        if (code === 'DBE') alert('데이터베이스 오류입니다.');
+        if (code !== 'SU') return;
+
+        if (!boardId) return;
+        getFavoriteListRequest(boardId).then(getFavoriteListResponse);
+    }
+
         //            event handler: 좋아요 클릭 이벤트 처리                  //
         const onFavoriteClickHandler = () => {
-            setFavorite(!isFavorite);
+            if (!loginUser || !cookies.accessToken || !boardId) return;
+            PutFavoriteRequest(boardId,cookies.accessToken).then(putFavoriteResponse);
         }
 
         //            event handler: 좋아요 상자 보기 클릭 이벤트 처리                  //
