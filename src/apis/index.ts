@@ -3,8 +3,8 @@ import { SignInRequestDto, SignUpRequestDto } from './request/auth';
 import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto } from './response/user';
-import { PostBoardRequestDto, PostCommentRequestDto } from './request/board';
-import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto } from './response/board';
+import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto } from './response/board';
 
 
 const DOMAIN = 'http://localhost:8080';
@@ -54,6 +54,7 @@ const GET_FAVORITE_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board
 const GET_COMMENT_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/comment-list`;
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 const POST_COMMENT_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/comment`;
+const PATCH_BOARD_URL =  (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
 const PUT_FAVORITE_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite`;
 const DELETE_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
 
@@ -134,6 +135,21 @@ export const postCommentRequest = async (boardId : number | string, requestBody 
     const result = await axios.post(POST_COMMENT_URL(boardId), requestBody, authorization(accessToken))
     .then(response => {
         const responseBody: PostBoardResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+}
+
+// 게시물 수정
+export const patchBoardRequest = async (boardId : number | string, requestBody: PatchBoardResquestDto, accessToken: string) => {
+    const result = await axios.patch(PATCH_BOARD_URL(boardId), requestBody, authorization(accessToken))
+    .then(response => {
+        const responseBody: PatchBoardResponseDto =  response.data;
         return responseBody;
     })
     .catch(error => {
