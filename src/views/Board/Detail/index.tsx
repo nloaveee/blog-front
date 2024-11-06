@@ -75,8 +75,7 @@ export default function BoardDetail() {
 
     //           function : get board response 처리 함수             //
     const getBoardResponse = (
-      responseBody: GetBoardResponseDto | ResponseDto | null
-    ) => {
+      responseBody: GetBoardResponseDto | ResponseDto | null) => {
       if (!responseBody) return;
       const { code } = responseBody;
       if (code === 'NB') alert('존재하지 않는 게시물입니다.');

@@ -11,7 +11,7 @@
 }
 
 .board-list-item:hover {
-    background-color: white;
+    background-color:  rgba(0, 0, 0, 0.05);
 }
 .board-list-item-main-box {
     flex: 1;
