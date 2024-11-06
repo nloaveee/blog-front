@@ -21,7 +21,7 @@ export default function Pagination(props: Props) {
 
     //            event handler:  페이지 클릭 이벤트 처리                //
     const onPageClickHandler = (page: number) => {
-
+        setCurrentPage(page);
     }
     //            event handler:  이전 클릭 이벤트 처리                //
     const onPreviousClickHandler = () => {
