@@ -4,7 +4,8 @@ import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto } from './response/user';
 import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
-import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto } from './response/board';
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto } from './response/board';
+import { GetPopularListResponseDto } from './response/search';
 
 
 const DOMAIN = 'http://localhost:8080';
@@ -49,6 +50,10 @@ export const signUpRequest = async (requestBody: SignUpRequestDto) => {
 }
 
 const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
+
+const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
+const GET_TOP_3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
+
 const INCREASE_VIEW_COUNT_URL = (boardId : number | string) => `${API_DOMAIN}/board/${boardId}/increase-view-count`;
 const GET_FAVORITE_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite-list`;
 const GET_COMMENT_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/comment-list`;
@@ -71,6 +76,36 @@ export const getBoardRequest = async (boardId: number | string) => {
     })
     return result;
 }
+
+// 최근 게시물 불러오기 
+export const getLatestBoardListRequest = async () => {
+    const result = await axios.get(GET_LATEST_BOARD_LIST_URL())
+    .then(response => {
+        const responseBody: GetLatestBoardListResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+};
+
+// top3 게시물 불러오기 
+export const getTop3BoardListRequest = async () => {
+    const result = await axios.get(GET_TOP_3_BOARD_LIST_URL())
+    .then(response => {
+        const responseBody: GetTop3BoardListResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+};
 
 export const IncreaseViewCountRequest = async (boardId: number | string) => {
     const result = await axios.get(INCREASE_VIEW_COUNT_URL(boardId))
@@ -189,6 +224,24 @@ export const deleteBoardRequest = async (boardId : number | string, accessToken:
     })
     return result;
 }
+
+const GET_POPULAR_LIST_URL = () =>`${API_DOMAIN}/search/popular-list`;
+
+// 인기 검색어 리스트 가져오기 
+export const getPopularListResquest = async ( ) => {
+    const result = await axios.get(GET_POPULAR_LIST_URL())
+        .then(response => {
+            const responseBody: GetPopularListResponseDto =  response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if (!error.response.data) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+        return result;
+}
+
 
 const GET_SIGN_IN_USER_URL = () => `${API_DOMAIN}/user`;
 
