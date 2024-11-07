@@ -4,8 +4,8 @@ import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto } from './response/user';
 import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
-import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto } from './response/board';
-import { GetPopularListResponseDto } from './response/search';
+import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto, GetSearchBoardListResponseDto } from './response/board';
+import { GetPopularListResponseDto, GetRelationListResponseDto } from './response/search';
 
 
 const DOMAIN = 'http://localhost:8080';
@@ -53,6 +53,7 @@ const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${board
 
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
 const GET_TOP_3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
+const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | null) => `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`;
 
 const INCREASE_VIEW_COUNT_URL = (boardId : number | string) => `${API_DOMAIN}/board/${boardId}/increase-view-count`;
 const GET_FAVORITE_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite-list`;
@@ -97,6 +98,21 @@ export const getTop3BoardListRequest = async () => {
     const result = await axios.get(GET_TOP_3_BOARD_LIST_URL())
     .then(response => {
         const responseBody: GetTop3BoardListResponseDto =  response.data;
+        return responseBody;
+    })
+    .catch(error => {
+        if (!error.response) return null;
+        const responseBody: ResponseDto = error.response.data;
+        return responseBody;
+    })
+    return result;
+};
+
+// 검색 페이지 
+export const getSearchBoardListRequest = async (searchWord: string, preSearchWord: string | null) => {
+    const result = await axios.get(GET_SEARCH_BOARD_LIST_URL(searchWord,preSearchWord))
+    .then(response => {
+        const responseBody: GetSearchBoardListResponseDto =  response.data;
         return responseBody;
     })
     .catch(error => {
@@ -226,12 +242,28 @@ export const deleteBoardRequest = async (boardId : number | string, accessToken:
 }
 
 const GET_POPULAR_LIST_URL = () =>`${API_DOMAIN}/search/popular-list`;
+const GET_RELATION_LIST_URL = (searchWord : string) => `${API_DOMAIN}/search/${searchWord}/relation-list`;
 
 // 인기 검색어 리스트 가져오기 
 export const getPopularListResquest = async ( ) => {
     const result = await axios.get(GET_POPULAR_LIST_URL())
         .then(response => {
             const responseBody: GetPopularListResponseDto =  response.data;
+            return responseBody;
+        })
+        .catch(error => {
+            if (!error.response.data) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        })
+        return result;
+}
+
+// 연관 검색어 리스트 가져오기 
+export const getRelationListResquest = async ( searchWord : string ) => {
+    const result = await axios.get(GET_RELATION_LIST_URL(searchWord))
+        .then(response => {
+            const responseBody: GetRelationListResponseDto =  response.data;
             return responseBody;
         })
         .catch(error => {
