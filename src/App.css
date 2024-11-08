@@ -116,6 +116,14 @@
     background-color: rgba(0, 0, 0, 0.05);
 }
 
+.icon-box-large {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .icon-box {
     width: 24px;
@@ -238,4 +246,12 @@
 .comment-icon {
     background-image: url(assets/image/chat-light.png);
 }
+
+.edit-icon {
+    background-image: url(assets/image/edit-light.png);
+}  
+
+.image-box-white-icon {
+    background-image: url(assets/image/image-box-white-light.png);
+}  
 
