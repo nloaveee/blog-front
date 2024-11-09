@@ -2,7 +2,7 @@ import axios from 'axios';
 import { SignInRequestDto, SignUpRequestDto } from './request/auth';
 import { SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
-import { getSignInUserResponseDto, GetUserResponseDto, PatchNicknameResonseDto, PatchProfileImageResponseDto } from './response/user';
+import { getSignInUserResponseDto, GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponseDto } from './response/user';
 import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
 import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto, GetSearchBoardListResponseDto, GetUserBoardListResponseDto } from './response/board';
 import { GetPopularListResponseDto, GetRelationListResponseDto } from './response/search';
@@ -303,7 +303,7 @@ export const getUserRequest = async (email : string) => {
             return responseBody;
         })
         .catch(error => {
-            if (!error.response.data) return null;
+            if (!error.response) return null;
             const responseBody: ResponseDto = error.response.data;
             return responseBody;
         })
@@ -324,20 +324,22 @@ export const getSignInUserRequest = async (accessToken : string) => {
         return result;
 }
 
+// 닉네임 수정
 export const patchNicknameRequest = async (requestBody : PatchNicknameRequestDto, accessToken : string) => {
     const result = await axios.patch(PATCH_NICKNAME_URL(),requestBody,authorization(accessToken))
         .then(response => {
-            const responseBody: PatchNicknameResonseDto =  response.data;
+            const responseBody: PatchNicknameResponseDto =  response.data;
             return responseBody;
         })
         .catch(error => {
-            if (!error.response.data) return null;
+            if (!error.response) return null;
             const responseBody: ResponseDto = error.response.data;
             return responseBody;
         })
         return result;
 };
 
+// 프로필 이미지 수정
 export const patchProfileImageRequest = async (requestBody : PatchProfileImageRequestDto, accessToken : string) => {
     const result = await axios.patch(PATCH_PROFILE_IMAGE_URL(),requestBody,authorization(accessToken))
         .then(response => {
@@ -345,7 +347,7 @@ export const patchProfileImageRequest = async (requestBody : PatchProfileImageRe
             return responseBody;
         })
         .catch(error => {
-            if (!error.response.data) return null;
+            if (!error.response) return null;
             const responseBody: ResponseDto = error.response.data;
             return responseBody;
         })
