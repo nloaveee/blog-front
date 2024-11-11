@@ -15,6 +15,7 @@ import { useCookies } from 'react-cookie';
 import { MAIN_PAHT } from 'constant';
 import { useNavigate } from 'react-router-dom';
 import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
+import userEvent from '@testing-library/user-event';
 
 //            component: 인증 화면 컴포넌트                //
 export default function Authentication() {
@@ -164,6 +165,8 @@ export default function Authentication() {
                 </div>
               </div>
             )}
+            <div className='kakao-sign-in-button'></div>
+            <div className='naver-sign-in-button'></div>
             <div
               className="black-large-full-button"
               onClick={onSignInButtonClickHandler}
@@ -187,6 +190,8 @@ export default function Authentication() {
 
   //            component: sign up card 컴포넌트                //
   const SignUpCard = () => {
+    //            state: 아이디 요소 참조 상태              //
+    const idRef = useRef<HTMLInputElement | null>(null);
     //            state: 이메일 요소 참조 상태              //
     const emailRef = useRef<HTMLInputElement | null>(null);
     //            state: 패스워드 요소 참조 상태              //
@@ -204,6 +209,8 @@ export default function Authentication() {
 
     //           state : 페이지 번호 상태                //
     const [page, setPage] = useState<1 | 2>(1);
+    //           state : 아이디 상태                //
+    const [id , setId] = useState<string>('');
     //           state : 이메일 상태                //
     const [email, setEmail] = useState<string>('');
     //           state : 패스워드 상태                //
@@ -305,6 +312,12 @@ export default function Authentication() {
       setView('sign-in');
     };
 
+    //           event handler : 아이디 변경 이벤트 처리             //
+    const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+      const {value} = event.target;
+      setId(value);
+    } 
+
     //           event handler : 이메일 변경 이벤트 처리             //
     const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target;
@@ -362,6 +375,8 @@ export default function Authentication() {
       setAgreedPersonal(!agreedPersonal);
       setAgreedPersonalError(false);
     };
+
+
     //           event handler : 패스워드 버튼 클릭 이벤트 처리             //
     const onPasswordButtonClickHandler = () => {
       if (passwordButtonIcon === 'eye-light-off-icon') {
@@ -482,6 +497,11 @@ export default function Authentication() {
       setView('sign-in');
     };
 
+    //           event handler :  아이디 버튼 클릭 이벤트 처리        //
+    const onIdButtonClickHandler = () => {
+
+    }
+
     //           event handler :  이벤트 키 다운 이벤트 처리             //
     const onEmailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key !== 'Enter') return;
@@ -547,6 +567,8 @@ export default function Authentication() {
       addressDetailRef.current.focus();
     };
 
+    
+
     //           effect :  페이지가 변경될 때 마다 실행될 함수             //
     useEffect(() => {
       if (page === 2) {
@@ -566,6 +588,19 @@ export default function Authentication() {
             </div>
             {page === 1 && (
               <>
+                <InputBox
+                  ref={idRef}
+                  label="아이디*"
+                  type="text"
+                  placeholder="아이디를 입력해주세요."
+                  value={id}
+                  onChange={onIdChangeHandler}
+                  buttonTitle='중복 확인'
+                  onButtonClick={onIdButtonClickHandler}
+                  error={false}
+                  message='사용 가능한 아이디 입니다.'
+                  onKeyDown={onEmailKeyDownHandler}
+                />
                 <InputBox
                   ref={emailRef}
                   label="이메일 주소*"

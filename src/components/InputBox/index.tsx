@@ -8,8 +8,9 @@ interface Props {
     type: 'text' | 'password';
     placeholder: string;
     value: string;
+    buttonTitle?: string;
     onChange: (evnet: ChangeEvent<HTMLInputElement>) => void;
-    error: boolean;
+    error?: boolean;
 
     icon?: 'eye-light-off-icon' | 'eye-light-on-icon' | 'expand-right-light-icon';
     onButtonClick?: () => void;
@@ -23,10 +24,11 @@ interface Props {
 const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
     //         state : properties            //
-    const { label, type, error, placeholder, value, icon, message } = props;
+    const { label, type, error, placeholder, value, icon, message, buttonTitle } = props;
     const { onChange, onButtonClick, onKeyDown } =props;
 
-
+    const buttonClass = value === '' ? 'input-box-button-disable' : 'input-box-button';
+    const messageClass = error ? 'inputbox-message-error' : 'inputbox-message';
 
     //         event handler : input 키 이벤트 처리 함수        //
     const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -41,14 +43,16 @@ const InputBox = forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
             <div className='inputbox-label'>{label}</div>
             <div className={error ? 'inputbox-container-error' : 'inputbox-container'}>
                 <input ref={ref} type={type} className='input' placeholder={placeholder} value={value} onChange={onChange} onKeyDown={onKeyDownHandler}/>
-                <div className='input-box-button'>{'중복 확인'}</div>
+                {buttonTitle !== undefined && onButtonClick !== undefined &&
+                    <div className={buttonClass} onClick={onButtonClick}>{buttonTitle}</div>
+                }
                 {onButtonClick !== undefined && 
                     <div className='icon-button' onClick={onButtonClick}>
                         {icon !== undefined && <div className={`icon ${icon}`}></div>}                      
                 </div>
                 }          
             </div>
-            {message !== undefined && <div className='inputbox-message-error'>{message}</div>}
+            {message !== undefined && <div className={messageClass}>{message}</div>}
         </div>
     )
 
