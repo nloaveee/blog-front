@@ -165,8 +165,11 @@ export default function Authentication() {
                 </div>
               </div>
             )}
-            <div className='kakao-sign-in-button'></div>
-            <div className='naver-sign-in-button'></div>
+
+            <div className='auth-sign-in-sns-button-box'>
+              <div className='kakao-sign-in-button'></div>
+              <div className='naver-sign-in-button'></div>
+            </div>
             <div
               className="black-large-full-button"
               onClick={onSignInButtonClickHandler}
@@ -194,6 +197,8 @@ export default function Authentication() {
     const idRef = useRef<HTMLInputElement | null>(null);
     //            state: 이메일 요소 참조 상태              //
     const emailRef = useRef<HTMLInputElement | null>(null);
+    //            state: 이메일 확인 요소 참조 상태              //
+    const certificationNumberRef = useRef<HTMLInputElement | null>(null);
     //            state: 패스워드 요소 참조 상태              //
     const passwordRef = useRef<HTMLInputElement | null>(null);
     //            state: 패스워드 확인 요소 참조 상태              //
@@ -213,6 +218,8 @@ export default function Authentication() {
     const [id , setId] = useState<string>('');
     //           state : 이메일 상태                //
     const [email, setEmail] = useState<string>('');
+    //           state : 이메일 확인 상태                //
+    const [certificationNumber, setCertificationNumber] = useState<string>('');
     //           state : 패스워드 상태                //
     const [password, setPassword] = useState<string>('');
     //           state : 패스워드 확인 상태                //
@@ -237,8 +244,12 @@ export default function Authentication() {
       'text' | 'password'
     >('password');
 
+    //           state : 아이디 에러 상태                //
+    const [isIdError, setIdError] = useState<boolean>(false)
     //           state : 이메일 에러 상태                //
     const [isEmailError, setEmailError] = useState<boolean>(false);
+    //           state : 이메일 확인 에러 상태                //
+    const [isCertificationError, setCertificationError] = useState<boolean>(false);
     //           state : 패스워드 에러 상태                //
     const [isPasswordError, setPasswordError] = useState<boolean>(false);
     //           state : 패스워드 확인 에러 상태                //
@@ -255,7 +266,11 @@ export default function Authentication() {
       useState<boolean>(false);
 
     //           state : 이메일 에러 메세지 상태                //
+    const [idErrorMessage, setIdErrorMessage] = useState<string>('');
+    //           state : 이메일 에러 메세지 상태                //
     const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
+    //           state : 이메일 확인 에러 메세지 상태                //
+    const [certificationErrorMessage, setCertificationErrorMessage] = useState<string>('');
     //           state : 패스워드 에러 메세지 상태                //
     const [passwordErrorMessage, setPasswordErrorMessage] =
       useState<string>('');
@@ -316,8 +331,8 @@ export default function Authentication() {
     const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       const {value} = event.target;
       setId(value);
-    } 
-
+      setIdErrorMessage('');
+    }; 
     //           event handler : 이메일 변경 이벤트 처리             //
     const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target;
@@ -341,6 +356,12 @@ export default function Authentication() {
       setPasswordCheckError(false);
       setPasswordCheckErrorMessage('');
     };
+    //           event handler : 이메일 확인 변경 이벤트 처리             //
+    const onCertificationNumberChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+      const {value} = event.target;
+      setCertificationNumber(value);
+      setCertificationErrorMessage('');
+    }; 
     //           event handler : 닉네임 변경 이벤트 처리             //
     const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target;
@@ -376,6 +397,18 @@ export default function Authentication() {
       setAgreedPersonalError(false);
     };
 
+    //           event handler : 아이디 중복 확인 버튼 클릭 이벤트 처리             //
+    const onIdButtonClickHandler = () => {
+
+    };
+    //           event handler : 이메일 버튼 클릭 이벤트 처리             //
+    const onEmailButtonClickHandler = () => {
+
+    };
+    //           event handler : 이메일 인증 버튼 클릭 이벤트 처리             //
+    const onCertificationNumberButtonClickHandler = () => {
+
+    };
 
     //           event handler : 패스워드 버튼 클릭 이벤트 처리             //
     const onPasswordButtonClickHandler = () => {
@@ -497,18 +530,23 @@ export default function Authentication() {
       setView('sign-in');
     };
 
-    //           event handler :  아이디 버튼 클릭 이벤트 처리        //
-    const onIdButtonClickHandler = () => {
-
-    }
-
-    //           event handler :  이벤트 키 다운 이벤트 처리             //
+    //           event handler :  아이디 키 다운 이벤트 처리             //
+    const onIdKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== 'Enter') return;
+      onIdButtonClickHandler();
+    };
+    //           event handler :  이메일 키 다운 이벤트 처리             //
     const onEmailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key !== 'Enter') return;
-      if (!emailRef.current) return;
-      emailRef.current.focus();
+      onEmailButtonClickHandler();
+      // if (!emailRef.current) return;
+      // emailRef.current.focus();
     };
-
+    //           event handler :  이메일 키 다운 이벤트 처리             //
+    const onCertificationNumberKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== 'Enter') return;
+      onCertificationNumberButtonClickHandler();
+    };
     //           event handler :  패스워드 키 다운 이벤트 처리             //
     const onPasswordKeyDownHandler = (
       event: KeyboardEvent<HTMLInputElement>
@@ -517,7 +555,6 @@ export default function Authentication() {
       if (!passwordRef.current) return;
       passwordRef.current.focus();
     };
-
     //           event handler :  패스워드 확인 키 다운 이벤트 처리             //
     const onPasswordCheckKeyDownHandler = (
       event: KeyboardEvent<HTMLInputElement>
@@ -597,20 +634,9 @@ export default function Authentication() {
                   onChange={onIdChangeHandler}
                   buttonTitle='중복 확인'
                   onButtonClick={onIdButtonClickHandler}
-                  error={false}
-                  message='사용 가능한 아이디 입니다.'
-                  onKeyDown={onEmailKeyDownHandler}
-                />
-                <InputBox
-                  ref={emailRef}
-                  label="이메일 주소*"
-                  type="text"
-                  placeholder="이메일 주소를 입력해주세요."
-                  value={email}
-                  onChange={onEmailChangeHandler}
-                  error={isEmailError}
-                  message={emailErrorMessage}
-                  onKeyDown={onEmailKeyDownHandler}
+                  error={isIdError}
+                  message={idErrorMessage}
+                  onKeyDown={onIdKeyDownHandler}
                 />
                 <InputBox
                   ref={passwordRef}
@@ -637,6 +663,32 @@ export default function Authentication() {
                   icon={passwordCheckButtonIcon}
                   onButtonClick={onPasswordCheckButtonClickHandler}
                   onKeyDown={onPasswordCheckKeyDownHandler}
+                />
+                <InputBox
+                  ref={emailRef}
+                  label="이메일 주소*"
+                  type="text"
+                  placeholder="이메일 주소를 입력해주세요."
+                  value={email}
+                  onChange={onEmailChangeHandler}
+                  buttonTitle='이메일 인증'
+                  error={isEmailError}
+                  message={emailErrorMessage}
+                  onButtonClick={onEmailButtonClickHandler}
+                  onKeyDown={onEmailKeyDownHandler}
+                />
+                <InputBox
+                  ref={certificationNumberRef}
+                  label="인증번호*"
+                  type="text"
+                  placeholder="인증번호 4자리를 입력해주세요."
+                  value={certificationNumber}
+                  onChange={onCertificationNumberChangeHandler}
+                  buttonTitle='인증 확인'
+                  error={isCertificationError}
+                  message={certificationErrorMessage}
+                  onButtonClick={onCertificationNumberButtonClickHandler}
+                  onKeyDown={onCertificationNumberKeyDownHandler}
                 />
               </>
             )}
