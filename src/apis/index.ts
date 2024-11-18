@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { EmailCertificationRequestDto, IdCheckRequestDto, SignInRequestDto, SignUpRequestDto } from './request/auth';
-import { EmailCertificationResponseDto, IdCheckResponseDto, SignInResponseDto, SignUpResponseDto } from './response/auth';
+import { CheckCertificationRequestDto, EmailCertificationRequestDto, IdCheckRequestDto, SignInRequestDto, SignUpRequestDto } from './request/auth';
+import { CheckCertificationResponseDto, EmailCertificationResponseDto, IdCheckResponseDto, SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto, GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponseDto } from './response/user';
 import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
@@ -33,6 +33,7 @@ const SIGN_UP_URL = () => `${API_DOMAIN}/auth/sign-up`;
 
 const ID_CHECK_URL = () => `${API_DOMAIN}/auth/id-check`;
 const EMAIL_CERTIFICATION_URL = () => `${API_DOMAIN}/auth/email-certification`;
+const CHECK_CERTIFICATION_URL = () => `${API_DOMAIN}/auth/check-certification`;
 
 
 export const signInRequest = async (requestBody: SignInRequestDto) => {
@@ -61,6 +62,13 @@ export const idCheckRequest = async (requestBody: IdCheckRequestDto) => {
 export const EmailCertificationRequest = async (requestBody: EmailCertificationRequestDto) => {
     const result = await axios.post(EMAIL_CERTIFICATION_URL(), requestBody)
     .then (responseHandler<EmailCertificationResponseDto>)
+    .catch (errorHandler);
+    return result;
+};
+
+export const checkCertificationRequest = async (requestBody: CheckCertificationRequestDto) => {
+    const result = await axios.post(CHECK_CERTIFICATION_URL(), requestBody)
+    .then (responseHandler<CheckCertificationResponseDto>)
     .catch (errorHandler);
     return result;
 };
