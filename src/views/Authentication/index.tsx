@@ -7,15 +7,17 @@ import React, {
 } from 'react';
 import './style.css';
 import InputBox from 'components/InputBox';
-import { SignInRequestDto, SignUpRequestDto } from 'apis/request/auth';
-import { signInRequest, signUpRequest } from 'apis';
-import { SignInResponseDto, SignUpResponseDto } from 'apis/response/auth';
+import { EmailCertificationRequestDto, IdCheckRequestDto, SignInRequestDto, SignUpRequestDto } from 'apis/request/auth';
+import { EmailCertificationRequest, idCheckRequest, signInRequest, signUpRequest } from 'apis';
+import { EmailCertificationResponseDto, IdCheckResponseDto, SignInResponseDto, SignUpResponseDto } from 'apis/response/auth';
 import { ResponseDto } from 'apis/response';
 import { useCookies } from 'react-cookie';
 import { MAIN_PAHT } from 'constant';
 import { useNavigate } from 'react-router-dom';
 import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
 import userEvent from '@testing-library/user-event';
+import { ResponseCode } from 'types/enum';
+import { ResponseBody } from 'types';
 
 //            component: 인증 화면 컴포넌트                //
 export default function Authentication() {
@@ -286,6 +288,9 @@ export default function Authentication() {
     //           state : 주소 에러 메세지 상태                //
     const [addressErrorMessage, setAddressErrorMessage] = useState<string>('');
 
+    //           state :                //
+    const [isIdCheck, setIdCheck] = useState<boolean>(false);
+
     //           state : 패스워드 버튼 아이콘 상태                //
     const [passwordButtonIcon, setPasswordButtonIcon] = useState<
       'eye-light-off-icon' | 'eye-light-on-icon'
@@ -300,7 +305,7 @@ export default function Authentication() {
 
     //           function : sign Up response 처리 함수            //
     const signUpResponse = (
-      responseBody: SignUpResponseDto | ResponseDto | null
+      responseBody: ResponseBody<SignUpResponseDto>
     ) => {
       if (!responseBody) {
         alert('네트워크 이상입니다');
@@ -327,11 +332,52 @@ export default function Authentication() {
       setView('sign-in');
     };
 
+    const navigate = useNavigate();
+
+    //           function : id check response 처리 함수            //
+    const idcheckResponse = (responseBody: ResponseBody<IdCheckResponseDto>) => {
+      if (!responseBody) return;
+
+      const {code} = responseBody;
+      if (code === 'VF') alert('아이디를 입력하세요.');
+      if (code === 'DI') {
+        setIdError(true);
+        setIdErrorMessage('이미 사용중인 아이디 입니다.');
+        setIdCheck(false);
+      }
+      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code !== 'SU') return;
+
+      setIdError(false);
+      setIdErrorMessage('사용 가능한 아이디 입니다.');
+      setIdCheck(true);
+    };
+
+    //           function : email certification response 처리 함수            //
+    const EmailCertificationResponse = (responseBody: ResponseBody<EmailCertificationResponseDto>) => {
+      if (!responseBody) return;
+
+      const {code} = responseBody;
+      if (code === 'VF') alert('아이디와 이메일을 모두 입력하세요.');
+      if (code === 'DI') {
+        setIdError(true);
+        setIdErrorMessage('이미 사용중인 아이디 입니다.');
+        setIdCheck(false);
+      };
+      if (code === 'MF') alert('이메일 전송에 실패했습니다');
+      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code !== 'SU') return;
+
+      setEmailError(false);
+      setEmailErrorMessage('인증번호가 전송되었습니다.');
+    };
+
     //           event handler : 아이디 변경 이벤트 처리             //
     const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       const {value} = event.target;
       setId(value);
       setIdErrorMessage('');
+      setIdCheck(false);
     }; 
     //           event handler : 이메일 변경 이벤트 처리             //
     const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -399,16 +445,33 @@ export default function Authentication() {
 
     //           event handler : 아이디 중복 확인 버튼 클릭 이벤트 처리             //
     const onIdButtonClickHandler = () => {
+      if(!id) return;
+      const requestBody: IdCheckRequestDto = { id };
+      
+      idCheckRequest(requestBody).then(idcheckResponse);
 
     };
     //           event handler : 이메일 버튼 클릭 이벤트 처리             //
     const onEmailButtonClickHandler = () => {
+      if(!id && !email) return;
+
+      const emailpattern = /^[a-zA-Z0-9]*@[-.]?[a-zA-Z0-9]*\.[a-zA-Z]{2,4}$/;
+      const isEmailPattern = emailpattern.test(email);
+      if (!isEmailPattern) {
+        setEmailError(true);
+        setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.');
+        return;
+      }
+
+      const requestBody: EmailCertificationRequestDto = {id, email};
+      EmailCertificationRequest(requestBody).then(EmailCertificationResponse);
 
     };
     //           event handler : 이메일 인증 버튼 클릭 이벤트 처리             //
     const onCertificationNumberButtonClickHandler = () => {
 
     };
+
 
     //           event handler : 패스워드 버튼 클릭 이벤트 처리             //
     const onPasswordButtonClickHandler = () => {
@@ -436,12 +499,8 @@ export default function Authentication() {
     };
     //           event handler :  다음 단계 버튼 클릭 이벤트 처리             //
     const onNextButtonClickHandler = () => {
-      const emailpattern = /^[a-zA-Z0-9]*@[-.]?[a-zA-Z0-9]*\.[a-zA-Z]{2,4}$/;
-      const isEmailPattern = emailpattern.test(email);
-      if (!isEmailPattern) {
-        setEmailError(true);
-        setEmailErrorMessage('이메일 주소 포멧이 맞지 않습니다.');
-      }
+
+
 
       const isCheckedPassword = password.trim().length >= 8;
       if (!isCheckedPassword) {
@@ -455,7 +514,7 @@ export default function Authentication() {
         setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
       }
 
-      if (!isEmailPattern || !isCheckedPassword || !isEqualPassword) return;
+      if ( !isCheckedPassword || !isEqualPassword) return;
 
       setPage(2);
     };

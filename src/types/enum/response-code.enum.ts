@@ -20,7 +20,7 @@ enum ResponseCode {
     NO_PERMISSION = "NP" ,
 
      // HTTP Status = 500
-    MAIL_FAIL = "NF",
+    MAIL_FAIL = "MF",
     DATABASE_ERROR = "DBE" ,
 
 }

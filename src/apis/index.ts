@@ -1,12 +1,23 @@
-import axios from 'axios';
-import { SignInRequestDto, SignUpRequestDto } from './request/auth';
-import { SignInResponseDto, SignUpResponseDto } from './response/auth';
+import axios, { AxiosResponse } from 'axios';
+import { EmailCertificationRequestDto, IdCheckRequestDto, SignInRequestDto, SignUpRequestDto } from './request/auth';
+import { EmailCertificationResponseDto, IdCheckResponseDto, SignInResponseDto, SignUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { getSignInUserResponseDto, GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponseDto } from './response/user';
 import { PatchBoardResquestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
 import { PostBoardResponseDto, GetBoardResponseDto, IncreaseViewCountResponseDto, GetFavoriteListResponseDto, GetCommentListResponseDto, DeleteBoardResponseDto, PatchBoardResponseDto, GetLatestBoardListResponseDto, GetTop3BoardListResponseDto, GetSearchBoardListResponseDto, GetUserBoardListResponseDto } from './response/board';
 import { GetPopularListResponseDto, GetRelationListResponseDto } from './response/search';
 import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from './request/user';
+
+const responseHandler = <T> (response : AxiosResponse<any, any>) => {
+    const responseBody: T =response.data;
+    return responseBody;
+};
+
+const errorHandler = (error: any) => {
+    if (!error.response || !error.response.data) return null;
+    const responseBody: ResponseDto = error.response.data;
+    return responseBody;
+};
 
 
 const DOMAIN = 'http://localhost:8080';
@@ -20,35 +31,39 @@ const authorization = (accessToken: string) => {
 const SIGN_IN_URL = () => `${API_DOMAIN}/auth/sign-in`;
 const SIGN_UP_URL = () => `${API_DOMAIN}/auth/sign-up`;
 
+const ID_CHECK_URL = () => `${API_DOMAIN}/auth/id-check`;
+const EMAIL_CERTIFICATION_URL = () => `${API_DOMAIN}/auth/email-certification`;
+
+
 export const signInRequest = async (requestBody: SignInRequestDto) => {
     const result = await axios.post(SIGN_IN_URL(), requestBody)
-    .then( response => {
-        const responseBody: SignInResponseDto = response.data;
-        return responseBody;
-    })
-    .catch ( error => {
-        if (!error.response.data) return null;
-        const responseBody: ResponseDto = error.response.data;
-        return responseBody;
-    });
+    .then(responseHandler<SignInResponseDto>)
+    .catch (errorHandler);
 
     return result;
 }
 
 export const signUpRequest = async (requestBody: SignUpRequestDto) => {
     const result = await axios.post(SIGN_UP_URL(), requestBody)
-    .then (response => {
-        const responseBody: SignUpResponseDto =  response.data;
-        return responseBody;
-    })
-    .catch ( error => {
-        if (!error.response.data) return null;
-        const responseBody: ResponseDto = error.response.data;
-        return responseBody;
-    });
+    .then (responseHandler<SignUpResponseDto>)
+    .catch (errorHandler);
 
     return result;
 }
+
+export const idCheckRequest = async (requestBody: IdCheckRequestDto) => {
+    const result = await axios.post(ID_CHECK_URL(), requestBody)
+    .then (responseHandler<IdCheckResponseDto>)
+    .catch (errorHandler);
+    return result;
+};
+
+export const EmailCertificationRequest = async (requestBody: EmailCertificationRequestDto) => {
+    const result = await axios.post(EMAIL_CERTIFICATION_URL(), requestBody)
+    .then (responseHandler<EmailCertificationResponseDto>)
+    .catch (errorHandler);
+    return result;
+};
 
 const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}`;
 
