@@ -92,7 +92,7 @@ export default function BoardDetail() {
         setWriter(false);
         return;
       }
-      const isWriter = loginUser.email === board.writerEmail;
+      const isWriter = loginUser.id === board.writerEmail;
       setWriter(isWriter);
     };
 
@@ -126,14 +126,14 @@ export default function BoardDetail() {
     //            event handler : update 버튼 클릭 이벤트 처리                  //
     const onUpdateButtonClickHandler = () => {
       if (!board || !loginUser) return;
-      if (loginUser.email !== board.writerEmail) return;
+      if (loginUser.id !== board.writerEmail) return;
       navigate(BOARD_PATH() + '/' + BOARD_UPDATE_PATH(board.boardId));
     };
 
     //            event handler : delete 버튼 클릭 이벤트 처리                  //
     const onDeleteButtonClickHandler = () => {
       if (!boardId || !board || !loginUser || !cookies.accessToken) return;
-      if (loginUser.email !== board.writerEmail) return;
+      if (loginUser.id !== board.writerEmail) return;
 
       deleteBoardRequest(boardId, cookies.accessToken).then(
         deleteBoardResponse
@@ -267,7 +267,7 @@ export default function BoardDetail() {
 
       const isFavorite =
         favoriteList.findIndex(
-          (favorite) => favorite.email === loginUser.email
+          (favorite) => favorite.email === loginUser.id
         ) !== -1;
       setFavorite(isFavorite);
     };

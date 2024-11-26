@@ -61,7 +61,7 @@ export default function BoardWrite() {
       setBoardImageFileList(boardImageFileList)
     );
 
-    if (!loginUser || loginUser.email !== writerEmail) {
+    if (!loginUser || loginUser.id !== writerEmail) {
       navigate(MAIN_PAHT());
       return;
     }

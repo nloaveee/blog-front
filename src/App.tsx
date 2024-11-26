@@ -16,6 +16,9 @@ import { getSignInUserRequest } from 'apis';
 import { ResponseDto } from 'apis/response';
 import GetSignInUserResponseDto from 'apis/response/user/get-sign-in-user.response.dto';
 import { User } from 'types/interface';
+import { ResponseBody } from 'types';
+import { getSignInUserResponseDto } from 'apis/response/user';
+import OAuth from 'views/Authentication/OAuth';
 
 
 
@@ -25,9 +28,9 @@ function App() {
     //          state: 로그인 유저 전역 상태           //
     const { setLoginUser, resetLoginUser } = useLoginUserStore();
     //          state: cookie 상태           //
-    const [cookies, setCookies] = useCookies();
+    const [cookies, setCookie] = useCookies();
 
-    const getSignInUserResponse = (responseBody: GetSignInUserResponseDto | ResponseDto | null) => {
+    const getSignInUserResponse = (responseBody: ResponseBody<getSignInUserResponseDto>) => {
         if (!responseBody) return;
         const { code } = responseBody;
         if (code === 'AF' || code === 'NU' || code === 'DBE' ) {
@@ -51,10 +54,11 @@ function App() {
 
 
     //           render : Application 컴포넌트 렌더링          //
+
     // description : 메인 화면 : '/' - Main //
     // description : 로그인 + 회원가입 화면 : '/auth' - Authentication //
     // description : 검색 화면 : '/search/:searchWord'  - Search //
-    // description : 유저 페이지 : '/user/:userEmail'  - User //
+    // description : 유저 페이지 : '/user/:id'  - User //
     // description : 게시물 상세보기 : '/board/detail/:boardId'  - BoardDetail //
     // description : 게시물 작성하기 : '/board/write'  - BoardWrite //
     // description : 게시물 수정하기 : '/board/update/:boardId'  - BoardUpdate //
@@ -64,12 +68,13 @@ function App() {
                 <Route path={MAIN_PAHT()} element={<Main/>}></Route>
                 <Route path={AUTH_PAHT()} element={<Authentication/>}></Route>
                 <Route path={SEARCH_PATH(':searchWord')} element={<Search/>}></Route>
-                <Route path={USER_PATH(':userEmail')} element={<UserP/>}></Route>
+                <Route path={USER_PATH(':userId')} element={<UserP/>}></Route>
                 <Route path={BOARD_PATH()}>
                     <Route path={BOARD_WRITE_PATH()} element={<BoardWrite />} />
                     <Route path={BOARD_DETAIL_PATH(':boardId')} element={<BoardDetail />} />
                     <Route path={BOARD_UPDATE_PATH(':boardId')} element={<BoardUpdate />} />
                 </Route>                
+                <Route path='oauth-response/:token/:expirationTime' element={<OAuth />}></Route>
             </Route>
             <Route path='*' element={<h1>404 Not Fonund</h1>}/>
         </Routes>

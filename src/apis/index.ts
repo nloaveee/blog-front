@@ -28,6 +28,7 @@ const authorization = (accessToken: string) => {
     return { headers : { Authorization: `Bearer ${accessToken}`}}
 };
 
+export const SNS_SIGN_IN_URL = (type: 'kakao' | 'naver') => `${API_DOMAIN}/auth/oauth2/${type}`    
 const SIGN_IN_URL = () => `${API_DOMAIN}/auth/sign-in`;
 const SIGN_UP_URL = () => `${API_DOMAIN}/auth/sign-up`;
 
@@ -78,7 +79,7 @@ const GET_BOARD_URL = (boardId: number | string) => `${API_DOMAIN}/board/${board
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
 const GET_TOP_3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
 const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | null) => `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`;
-const GET_USER_BOARD_LIST_URL = (email: string) => `${API_DOMAIN}/board/user-board-list/${email}`;
+const GET_USER_BOARD_LIST_URL = (id: string) => `${API_DOMAIN}/board/user-board-list/${id}`;
 
 const INCREASE_VIEW_COUNT_URL = (boardId : number | string) => `${API_DOMAIN}/board/${boardId}/increase-view-count`;
 const GET_FAVORITE_LIST_URL = (boardId: number | string) => `${API_DOMAIN}/board/${boardId}/favorite-list`;
@@ -148,8 +149,8 @@ export const getSearchBoardListRequest = async (searchWord: string, preSearchWor
     return result;
 };
 
-export const getUserBoardListRequest = async (email:string) => {
-    const result = await axios.get(GET_USER_BOARD_LIST_URL(email))
+export const getUserBoardListRequest = async (id:string) => {
+    const result = await axios.get(GET_USER_BOARD_LIST_URL(id))
     .then(response => {
         const responseBody: GetUserBoardListResponseDto =  response.data;
         return responseBody;
@@ -314,13 +315,13 @@ export const getRelationListResquest = async ( searchWord : string ) => {
 };
 
 
-const GET_USER_URL = (email:string) => `${API_DOMAIN}/user/${email}`;
+const GET_USER_URL = (id:string) => `${API_DOMAIN}/user/${id}`;
 const GET_SIGN_IN_USER_URL = () => `${API_DOMAIN}/user`;
 const PATCH_NICKNAME_URL = () =>  `${API_DOMAIN}/user/nickname`;
 const PATCH_PROFILE_IMAGE_URL = () => `${API_DOMAIN}/user/profile-image`;
 
-export const getUserRequest = async (email : string) => {
-    const result = await axios.get(GET_USER_URL(email))
+export const getUserRequest = async (id : string) => {
+    const result = await axios.get(GET_USER_URL(id))
         .then(response => {
             const responseBody: GetUserResponseDto =  response.data;
             return responseBody;

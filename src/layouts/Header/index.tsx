@@ -118,14 +118,14 @@ export default function Header() {
     const MyPageButton = () => {
 
 
-        //           state : userEmail path variable 상태          //
-        const { userEmail } =useParams();
+        //           state : userId path variable 상태          //
+        const { userId } =useParams();
 
         //           event handler : 마이페이지 버튼 클릭 이벤트 처리 함수             //
         const onMyPageButtonClickHandler = () => {
             if (!loginUser) return;
-            const { email } = loginUser;
-            navigate(USER_PATH(email));
+            const { id } = loginUser;
+            navigate(USER_PATH(id));
         };
 
         //           event handler : 로그아웃 버튼 클릭 이벤트 처리 함수             //
@@ -141,7 +141,7 @@ export default function Header() {
         };
 
         //           render : 로그아웃 버튼 컴포넌트 렌더링          //
-        if (isLogin && userEmail === loginUser?.email)
+        if (isLogin && userId === loginUser?.id)
         return <div className='white-button' onClick={onSignOutButtonClickHandler}>{'로그아웃'}</div>
         
         //           render : 마이페이지 버튼 컴포넌트 렌더링          //
@@ -172,8 +172,8 @@ export default function Header() {
 
             resetBoard();
             if (!loginUser) return;
-            const {email} = loginUser;
-            navigate(USER_PATH(email));
+            const {id} = loginUser;
+            navigate(USER_PATH(id));
         }
 
         //           function : path board response 처리 함수           //
@@ -220,8 +220,6 @@ export default function Header() {
             
         }
 
-
-
         //           render : 업로드 버튼 컴포넌트 렌더링          //
         if (title && content)
         return <div className='black-button' onClick={onUploadButtonClickHandler}>{'업로드'}</div>
@@ -255,9 +253,10 @@ export default function Header() {
         setUserPage(isUserPage)
 
     },[pathname]);
+
     //            effect: loginUser가 변경될 때 마다 실행될 함수           //
     useEffect(() => {
-        setLogin(loginUser!==null);
+        setLogin(loginUser !== null);
     },[loginUser]);
 
     //           render : header layout 렌더링          //

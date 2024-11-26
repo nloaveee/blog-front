@@ -19,8 +19,8 @@ import Pagination from 'components/Pagination';
 //            component:  유저 화면 컴포넌트               //
 export default function User() {
 
-    //            state: useEmail path variable 상태              //
-    const {userEmail} = useParams();
+    //            state: userId path variable 상태              //
+    const {userId} = useParams();
     //            state:  마이페이지 여부 상태              //
     const [isMyPage, setMyPage] = useState<boolean>(true);
     //            state:  로그인 유저 상태              //
@@ -57,10 +57,10 @@ export default function User() {
                 return;
             }
 
-            const {email, nickname, profileImage} = responseBody as GetUserResponseDto;
+            const {id, nickname, profileImage} = responseBody as GetUserResponseDto;
             setNickname(nickname);
             setProfileImage(profileImage);
-            const isMyPage = email === loginUser?.email;
+            const isMyPage = id === loginUser?.id;
             setMyPage(isMyPage);
         };
 
@@ -83,8 +83,8 @@ export default function User() {
             if (code === 'DBE') alert('데이터베이스 오류입니다');
             if (code !== 'SU') return;
 
-            if (!userEmail) return;
-            getUserRequest(userEmail).then(getUserResponse);
+            if (!userId) return;
+            getUserRequest(userId).then(getUserResponse);
         };
 
         //          function : patch nickname response 처리 함수          //
@@ -99,8 +99,8 @@ export default function User() {
             if (code === 'DBE') alert('데이터베이스 오류입니다');
             if (code !== 'SU') return;
 
-            if (!userEmail) return;
-            getUserRequest(userEmail).then(getUserResponse);
+            if (!userId) return;
+            getUserRequest(userId).then(getUserResponse);
             setNicknameChange(false);
         };
 
@@ -144,10 +144,10 @@ export default function User() {
 
         //            effect:  email path variable 변경시 실행 할 함수              //
         useEffect (() => {
-            if (!userEmail) return;
-            getUserRequest(userEmail).then(getUserResponse);
+            if (!userId) return;
+            getUserRequest(userId).then(getUserResponse);
 
-        },[userEmail]);
+        },[userId]);
 
         //            render: 유저 화면 상단 렌더링                 //
         return (
@@ -213,7 +213,7 @@ export default function User() {
     const onSideCardClickHandler = () => {
         if (isMyPage) navigate(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
         else if (loginUser) {
-            navigate(USER_PATH(loginUser.email));
+            navigate(USER_PATH(loginUser.id));
         }
     }
 
@@ -235,11 +235,11 @@ export default function User() {
         setCount(userBoardList.length);
     };
 
-    //           effect : userEmail path variable이 변경될 때 마다 실행될 함수       //
+    //           effect : userId path variable이 변경될 때 마다 실행될 함수       //
     useEffect (()=> {
-        if (!userEmail) return;
-        getUserBoardListRequest(userEmail).then(getUserBoardListResponse);
-    }, [userEmail]);
+        if (!userId) return;
+        getUserBoardListRequest(userId).then(getUserBoardListResponse);
+    }, [userId]);
 
 
         //            render: 유저 화면 하단 렌더링                 //

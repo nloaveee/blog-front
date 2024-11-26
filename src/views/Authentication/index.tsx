@@ -8,15 +8,13 @@ import React, {
 import './style.css';
 import InputBox from 'components/InputBox';
 import { CheckCertificationRequestDto, EmailCertificationRequestDto, IdCheckRequestDto, SignInRequestDto, SignUpRequestDto } from 'apis/request/auth';
-import { checkCertificationRequest, EmailCertificationRequest, idCheckRequest, signInRequest, signUpRequest } from 'apis';
+import { checkCertificationRequest, EmailCertificationRequest, idCheckRequest, signInRequest, signUpRequest, SNS_SIGN_IN_URL } from 'apis';
 import { CheckCertificationResponseDto, EmailCertificationResponseDto, IdCheckResponseDto, SignInResponseDto, SignUpResponseDto } from 'apis/response/auth';
 import { ResponseDto } from 'apis/response';
 import { useCookies } from 'react-cookie';
 import { MAIN_PAHT } from 'constant';
 import { useNavigate } from 'react-router-dom';
 import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
-import userEvent from '@testing-library/user-event';
-import { ResponseCode } from 'types/enum';
 import { ResponseBody } from 'types';
 
 //            component: 인증 화면 컴포넌트                //
@@ -32,13 +30,13 @@ export default function Authentication() {
 
   //            component: sign in card 컴포넌트                //
   const SignInCard = () => {
-    //            state: 이메일 요소 참조 상태              /
-    const emailRef = useRef<HTMLInputElement | null>(null);
+    //            state: 아이디 요소 참조 상태              /
+    const idRef = useRef<HTMLInputElement | null>(null);
     //            state: 패스워드 요소 참조 상태              /
     const passwordRef = useRef<HTMLInputElement | null>(null);
 
     //            state: 이메일 상태              //
-    const [email, setEmail] = useState<string>('');
+    const [id, setId] = useState<string>('');
     //            state: 패스워드 상태              //
     const [password, setPassword] = useState<string>('');
     //            state: 패스워드 타입 상태              //
@@ -51,20 +49,19 @@ export default function Authentication() {
     >('eye-light-off-icon');
     //            state: error 상태              //
     const [error, setError] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
 
     //             function : sign in response 처리 함수          //
     const signInResponse = (
-      responseBody: SignInResponseDto | ResponseDto | null
-    ) => {
+      responseBody: ResponseBody<SignInResponseDto>) => {
       if (!responseBody) {
         alert('네트워크 이상입니다.');
         return;
       }
       const { code } = responseBody;
       if (code === 'DBE') alert('데이터베이스 오류입니다.');
-      if (code === 'SF' || code === 'VF') {
-        setError(true);
-      }
+      if (code === 'VF') alert('아이디와 비밀번호를 입력하세요.');
+      if (code === 'SF') setMessage('로그인 정보가 일치하지 않습니다.');
       if (code !== 'SU') return;
 
       const { token, expirationTime } = responseBody as SignInResponseDto;
@@ -75,11 +72,12 @@ export default function Authentication() {
       navigate(MAIN_PAHT());
     };
 
-    //            event handler : 이메일 변경 이벤트 처리            //
-    const onEmailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    //            event handler : 아이디 변경 이벤트 처리            //
+    const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
       setError(false);
       const { value } = event.target;
-      setEmail(value);
+      setId(value);
+      setMessage('');
     };
 
     //            event handler : 비밀번호 변경 이벤트 처리            //
@@ -87,13 +85,25 @@ export default function Authentication() {
       setError(false);
       const { value } = event.target;
       setPassword(value);
+      setMessage('');
     };
 
     //            event handler : 로그인 버튼 클릭 이벤트 처리            //
     const onSignInButtonClickHandler = () => {
-      const requestBody: SignInRequestDto = { email, password };
+
+      if (!id || !password) {
+        alert('아이디와 비밀번호 모두 입력하세요.');
+        return;
+      }
+
+      const requestBody: SignInRequestDto = { id, password };
       signInRequest(requestBody).then(signInResponse);
     };
+
+    //            event handler : sns 로그인 버튼 클릭 이벤트 처리            //
+    const onSnsSignInButtomClickHandler = (type: 'kakao' | 'naver') => {
+      window.location.href = SNS_SIGN_IN_URL(type);
+    }
 
     //            event handler : 회원가입 링크 클릭 이벤트 처리            //
     const onSignUpLinkClickHandler = () => {
@@ -111,8 +121,8 @@ export default function Authentication() {
       }
     };
 
-    //            event handler : 이메일 인풋 키 다운 이벤트 처리            //
-    const onEmailKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    //            event handler : 아이디 인풋 키 다운 이벤트 처리            //
+    const onIdKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key !== 'Enter') return;
       if (!passwordRef.current) return;
       passwordRef.current.focus();
@@ -135,14 +145,14 @@ export default function Authentication() {
               <div className="auth-card-title">{'로그인'}</div>
             </div>
             <InputBox
-              ref={emailRef}
-              label="이메일 주소"
+              ref={idRef}
+              label="아이디"
               type="text"
-              placeholder="이메일 주소를 입력해주세요"
+              placeholder="아이디를 입력해주세요."
               error={error}
-              value={email}
-              onChange={onEmailChangeHandler}
-              onKeyDown={onEmailKeyDownHandler}
+              value={id}
+              onChange={onIdChangeHandler}
+              onKeyDown={onIdKeyDownHandler}
             />
             <InputBox
               ref={passwordRef}
@@ -162,15 +172,15 @@ export default function Authentication() {
               <div className="auth-sign-in-error-box">
                 <div className="auth-sign-in-error-message">
                   {
-                    '이메일 주소 또는 비밀번호를 잘못 입력했습니다. \n입력하신 내용을 다시 확인해주세요.'
+                    '아이디 또는 비밀번호를 잘못 입력했습니다. \n입력하신 내용을 다시 확인해주세요.'
                   }
                 </div>
               </div>
             )}
 
             <div className='auth-sign-in-sns-button-box'>
-              <div className='kakao-sign-in-button'></div>
-              <div className='naver-sign-in-button'></div>
+              <div className='kakao-sign-in-button' onClick={() => onSnsSignInButtomClickHandler('kakao')}></div>
+              <div className='naver-sign-in-button' onClick={() => onSnsSignInButtomClickHandler('naver')}></div>
             </div>
             <div
               className="black-large-full-button"
@@ -315,10 +325,21 @@ export default function Authentication() {
       }
 
       const { code } = responseBody;
+      if (code === 'DI') {
+        setIdError(true);
+        setIdErrorMessage('이미 사용중인 아이디 입니다');
+        setIdCheck(false);
+      }
+
       if (code === 'DE') {
         setEmailError(true);
         setEmailErrorMessage('중복되는 이메일 주소입니다.');
       }
+      if (code === 'CF') {
+        setCertificationError(true);
+        setCertificationErrorMessage('인증번호가 일치하지 않습니다.');
+        setCertificationCheck(false);
+      };
       if (code === 'DN') {
         setNicknameError(true);
         setNicknameErrorMessage('중복되는 닉네임 입니다.');
@@ -487,6 +508,9 @@ export default function Authentication() {
       const requestBody: EmailCertificationRequestDto = {id, email};
       EmailCertificationRequest(requestBody).then(EmailCertificationResponse);
 
+      setEmailError(false);
+      setEmailErrorMessage('이메일 전송중...');
+
     };
     //           event handler : 이메일 인증 버튼 클릭 이벤트 처리             //
     const onCertificationNumberButtonClickHandler = () => {
@@ -524,7 +548,15 @@ export default function Authentication() {
     //           event handler :  다음 단계 버튼 클릭 이벤트 처리             //
     const onNextButtonClickHandler = () => {
 
-
+      const isCheckedId = id.trim().length > 0;
+      if (!isCheckedId) {
+        setIdError(true);
+        setIdErrorMessage('아이디를 입력해주세요');
+      }
+      if (isCheckedId && !isIdCheck) {
+        alert('아이디 중복 확인은 필수입니다.');
+        return;
+      }
 
       const isCheckedPassword = password.trim().length >= 8;
       if (!isCheckedPassword) {
@@ -538,12 +570,29 @@ export default function Authentication() {
         setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
       }
 
-      if ( !isCheckedPassword || !isEqualPassword) return;
+      const isCheckedEmail = email.trim().length > 0;
+      if (!isCheckedEmail) {
+        setEmailError(true);
+        setEmailErrorMessage('이메일을 입력해주세요.');
+      }
+
+      if (!isCertificationCheck) {
+        setCertificationError(true);
+        setCertificationErrorMessage('이메일 인증은 필수입니다.')
+      }
+
+      if (!isCheckedId || !isCheckedEmail ||  !isCheckedPassword || !isEqualPassword || !isCertificationCheck) return;
 
       setPage(2);
     };
     //           event handler :  회원가입 버튼 클릭 이벤트 처리             //
     const onSignUpButtonClickHandler = () => {
+
+      if (!isIdCheck) {
+        alert('아이디 중복 확인은 필수입니다.');
+        return;
+      }
+
       const emailPattern = /^[a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       const isEmailPattern = emailPattern.test(email);
       if (!isEmailPattern) {
@@ -555,13 +604,16 @@ export default function Authentication() {
       if (!isCheckedPassword) {
         setPasswordError(true);
         setPasswordErrorMessage('비밀번호는 8자 이상 입력해주세요.');
+        return;
       }
 
       const isEqualPassword = password === passwordCheck;
       if (!isEqualPassword) {
         setPasswordCheckError(true);
         setPasswordCheckErrorMessage('비밀번호가 일치하지 않습니다.');
+        return;
       }
+
       if (!isEmailPattern || !isCheckedPassword || !isEqualPassword) {
         setPage(1);
         return;
@@ -594,14 +646,17 @@ export default function Authentication() {
         return;
 
       const requestBody: SignUpRequestDto = {
+        id,
         email,
         password,
+        certificationNumber,
         nickname,
         telNumber,
         address,
         addressDetail,
         agreedPersonal,
       };
+
 
       signUpRequest(requestBody).then((response) =>
         signUpResponse(response as SignUpResponseDto | ResponseDto | null)
